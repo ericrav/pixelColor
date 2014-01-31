@@ -3,9 +3,10 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	this.cols = cols;
 	this.rows = rows;
 	this.pixelSize = pixelSize;
-
+	this.drawActive = true;
 	this.canvas.width = cols*pixelSize;
 	this.canvas.height = rows*pixelSize;
+	this.animateOn = false;
 
 	this.pixels = [];
 	for (var i = 0; i < cols; i++) {
@@ -16,74 +17,58 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 		}
 	}
 
-	this.drawColor = "#FF0000";
-	this.rgbSlice = "g";
-	this.rgbDirection = 1;
-	var self = this;
-	this.colorTimer = setInterval(function() {
-		self.updateDrawColor();
-	}, 30);
-
+	this.colorTimer = new ColorTimer();
 	var canvas = this.canvas;
 	var pixels = this.pixels;
+	var self = this;
 	this.canvas.addEventListener("mousemove", function(e) {
 		var rect = canvas.getBoundingClientRect();
 		var x = e.clientX - rect.left;
 		var y = e.clientY - rect.top;
 		var i = Math.floor(x/pixelSize);
 		var j = Math.floor(y/pixelSize);
-		pixels[i][j].setColor(self.drawColor);
-		pixels[i][j].draw();
+		if (self.drawActive) {
+			var originalColor = pixels[i][j].getColor();
+			pixels[i][j].setColor(self.colorTimer.getDrawColor());
+			pixels[i][j].draw();
+			if (originalColor == "#000000" && self.animateOn) {
+				pixels[i][j].animate();
+			}
+		}
 	});
 }
 
-PixelSystem.prototype.updateDrawColor = function() {
-	var r = parseInt(this.drawColor.substring(1,3), 16);
-	var g = parseInt(this.drawColor.substring(3,5), 16);
-	var b = parseInt(this.drawColor.substring(5,7), 16);
-	var change = 15 * this.rgbDirection;
-	switch (this.rgbSlice) {
-		case "r":
-		r += change;
-		if (r == 255*(1+this.rgbDirection)/2) {
-			this.rgbDirection *= -1;
-			this.rgbSlice = "b";
+PixelSystem.prototype.toggleAnimate = function() {
+	if (this.animateOn) {
+		this.animateOn = false;
+		for (var i = 0; i < this.cols; i++) {
+			for (var j = 0; j < this.rows; j++) {
+				if (this.pixels[i][j].getColor() != "#000000") this.pixels[i][j].stopAnimation();
+			}
 		}
-		break;
-		case "g":
-		g += change;
-		if (g == 255*(1+this.rgbDirection)/2) {
-			this.rgbDirection *= -1;
-			this.rgbSlice = "r";
+	} else {
+		this.animateOn = true;
+		for (var i = 0; i < this.cols; i++) {
+			for (var j = 0; j < this.rows; j++) {
+				if (this.pixels[i][j].getColor() != "#000000") this.pixels[i][j].animate();
+			}
 		}
-		break;
-		case "b":
-		b += change;
-		if (b == 255*(1+this.rgbDirection)/2) {
-			this.rgbDirection *= -1;
-			this.rgbSlice = "g";
-		}
-		break;
 	}
-	this.drawColor = "#" + ("00" + r.toString(16)).substr(-2) + ("00" + g.toString(16)).substr(-2) + ("00" + b.toString(16)).substr(-2);
+};
+
+PixelSystem.prototype.toggleDrawing = function() {
+	if (this.drawActive) this.drawActive = false;
+	else this.drawActive = true;
 };
 
 PixelSystem.prototype.pauseColorTimer = function() {
-	clearInterval(this.colorTimer);
+	this.colorTimer.pauseColorTimer();
 };
 
 PixelSystem.prototype.startColorTimer = function() {
-	var self = this;
-	this.colorTimer = setInterval(function() {
-		self.updateDrawColor();
-	}, 30);
+	this.colorTimer.startColorTimer();
 };
 
 PixelSystem.prototype.toggleColorTimer = function() {
-	if (this.colorTimer != null) {
-		this.pauseColorTimer();
-		this.colorTimer = null;
-	} else {
-		this.startColorTimer();
-	}
+	this.colorTimer.toggleColorTimer();
 };

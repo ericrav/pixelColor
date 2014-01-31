@@ -14,8 +14,26 @@ Pixel.prototype.draw = function() {
 	ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
+Pixel.prototype.animate = function() {
+	this.colorTimer = new ColorTimer(this.color);
+	var self = this;
+	this.timer = setInterval(function() {
+		self.setColor(self.colorTimer.getDrawColor());
+		self.draw();
+	}, 100);
+};
+
+Pixel.prototype.stopAnimation = function() {
+	clearInterval(this.timer);
+	this.colorTimer.pauseColorTimer();
+};
+
 Pixel.prototype.setColor = function(color) {
 	this.color = color;
+};
+
+Pixel.prototype.getColor = function() {
+	return this.color;
 };
 
 Pixel.prototype.getContext = function() {
