@@ -1,4 +1,10 @@
+body {
+	background-color: black;
+	color: white;
+	text-align: center;
+}
 canvas{
 	margin: auto;
 	display: block;
+	border: 1px solid white;
 }
