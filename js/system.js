@@ -38,6 +38,16 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	});
 }
 
+PixelSystem.prototype.clear = function() {
+	if (this.animateOn) this.toggleAnimate();
+	for (var i = 0; i < this.cols; i++) {
+		for (var j = 0; j < this.rows; j++) {
+			this.pixels[i][j].setColor("#000000");
+			this.pixels[i][j].draw();
+		}
+	}
+};
+
 PixelSystem.prototype.toggleAnimate = function() {
 	if (this.animateOn) {
 		this.animateOn = false;

@@ -24,8 +24,10 @@ Pixel.prototype.animate = function() {
 };
 
 Pixel.prototype.stopAnimation = function() {
-	clearInterval(this.timer);
-	this.colorTimer.pauseColorTimer();
+	if (this.timer || this.colorTimer) {
+		clearInterval(this.timer);
+		this.colorTimer.pauseColorTimer();
+	}
 };
 
 Pixel.prototype.setColor = function(color) {
