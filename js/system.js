@@ -49,6 +49,7 @@ PixelSystem.prototype.clear = function() {
 };
 
 PixelSystem.prototype.toggleAnimate = function() {
+	this.toggleColorTimer(); // toggle freeze color because of inverse functionality when animated
 	if (this.animateOn) {
 		this.animateOn = false;
 		for (var i = 0; i < this.cols; i++) {

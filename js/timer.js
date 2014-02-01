@@ -1,7 +1,45 @@
 function ColorTimer(startColor) {
 	this.drawColor = startColor || "#FF0000";
-	this.rgbSlice = "g";
-	this.rgbDirection = 1;
+	var r = parseInt(this.drawColor.substring(1,3), 16);
+	var g = parseInt(this.drawColor.substring(3,5), 16);
+	var b = parseInt(this.drawColor.substring(5,7), 16);
+	if (r != 255 && r != 0) {
+		this.rgbSlice = "r";
+		if (g == 255) this.rgbDirection = -1;
+		else this.rgbDirection = 1;
+	} else if (g != 255 && g != 0) {
+		this.rgbSlice = "g";
+		if (b == 255) this.rgbDirection = -1;
+		else this.rgbDirection = 1;
+	} else if (b != 255 && b != 0) {
+		this.rgbSlice = "b";
+		if (r == 255) this.rgbDirection = -1;
+		else this.rgbDirection = 1;
+	} else {
+		if (r == 255) {
+			if (g == 255) {
+				this.rgbSlice = "r";
+				this.rgbDirection = -1;
+			} else if (b == 255) {
+				this.rgbSlice = "b";
+				this.rgbDirection = -1;
+			} else {
+				this.rgbSlice = "g";
+				this.rgbDirection = 1;
+			}
+		} else {
+			if (g == 255 && b == 255) {
+				this.rgbSlice = "g";
+				this.rgbDirection = -1;
+			} else if (g == 255) {
+				this.rgbSlice = "b";
+				this.rgbDirection = 1;
+			} else {
+				this.rgbSlice = "r";
+				this.rgbDirection = 1;
+			}
+		}
+	}
 	var self = this;
 	this.timer = setInterval(function() {
 		self.updateDrawColor();
@@ -14,6 +52,7 @@ ColorTimer.prototype.updateDrawColor = function() {
 	var g = parseInt(this.drawColor.substring(3,5), 16);
 	var b = parseInt(this.drawColor.substring(5,7), 16);
 	var change = 15 * this.rgbDirection;
+	console.log(this.drawColor);
 	switch (this.rgbSlice) {
 		case "r":
 		r += change;
