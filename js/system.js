@@ -29,11 +29,10 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 		var j = Math.floor(y/pixelSize);
 		if (self.drawActive) {
 			var originalColor = pixels[i][j].getColor();
+			if (self.animateOn) pixels[i][j].stopAnimation();
 			pixels[i][j].setColor(self.colorTimer.getDrawColor());
 			pixels[i][j].draw();
-			if (originalColor == "#000000" && self.animateOn) {
-				pixels[i][j].animate();
-			}
+			if (self.animateOn) pixels[i][j].animate();
 		}
 	});
 }
