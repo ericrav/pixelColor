@@ -1,37 +1,25 @@
-function Pixel(canvas, x, y, width, height, startColor) {
+function Pixel(canvas, x, y, width, height, colorObject) {
 	this.canvas = canvas;
 	this.ctx = canvas.getContext("2d");
 	this.x = x;
 	this.y = y;
 	this.width = width || 50;
 	this.height = height || this.width;
-	this.color = startColor || "#000000";
+	this.color = colorObject || new Color("#000000", -1);
 }
 
 Pixel.prototype.draw = function() {
 	ctx = canvas.getContext("2d");
-	ctx.fillStyle = this.color;
+	ctx.fillStyle = this.color.getColor();
 	ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
-Pixel.prototype.animate = function() {
-	this.colorTimer = new ColorTimer(this.color);
-	var self = this;
-	this.timer = setInterval(function() {
-		self.setColor(self.colorTimer.getDrawColor());
-		self.draw();
-	}, 100);
-};
-
-Pixel.prototype.stopAnimation = function() {
-	if (this.timer || this.colorTimer) {
-		clearInterval(this.timer);
-		this.colorTimer.pauseColorTimer();
-	}
-};
-
-Pixel.prototype.setColor = function(color) {
+Pixel.prototype.setColorObject = function(color) {
 	this.color = color;
+};
+
+Pixel.prototype.setColor = function(hex) {
+	this.color.setHex(hex);
 };
 
 Pixel.prototype.getColor = function() {
