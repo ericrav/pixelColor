@@ -8,3 +8,12 @@ canvas{
 	display: block;
 	border: 1px solid white;
 }
+#help {
+	width: 100%;
+	text-align: center;
+	background-color: rgba(0,0,0,0.5);
+}
+.fixed {
+	position: fixed;
+	bottom: 0;
+}
