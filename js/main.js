@@ -11,6 +11,8 @@ window.onkeyup = function(e) {
 		document.getElementById("help").className = "";
 	} else if (key == 70) { // f freeze color
 		sys.toggleColorFreeze();
+	} else if (key == 69) { // e toggle eraser
+		sys.toggleEraser();
 	} else if (key == 67) { // c clear drawing
 		sys.clear();
 	}

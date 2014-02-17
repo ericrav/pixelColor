@@ -7,6 +7,7 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	this.canvas.width = cols*pixelSize;
 	this.canvas.height = rows*pixelSize;
 	this.animateOn = false;
+	this.eraser = false;
 
 	this.colorIndex = 0;
 	this.palette = new Palette(15);
@@ -35,9 +36,18 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 		var j = Math.floor(y/pixelSize);
 		if (self.drawActive) {
 			var pixel = self.pixels[i][j];
-			pixel.setColorObject(new Color(self.palette.getPaletteColor(self.colorIndex), self.colorIndex));
-			pixel.draw();
-			if (self.activePixels.indexOf(pixel) == -1) self.activePixels.push(pixel);
+			var activeIndex = self.activePixels.indexOf(pixel);
+			if (self.eraser) {
+				if (activeIndex != -1) {
+					pixel.setColorObject(new Color("#000000", -1));
+					pixel.draw();
+					self.activePixels.splice(activeIndex, 1);
+				}
+			} else {
+				pixel.setColorObject(new Color(self.palette.getPaletteColor(self.colorIndex), self.colorIndex));
+				pixel.draw();
+				if (activeIndex == -1) self.activePixels.push(pixel);	
+			}
 		}
 	});
 }
@@ -108,6 +118,11 @@ PixelSystem.prototype.recolor = function() {
 PixelSystem.prototype.toggleDrawing = function() {
 	if (this.drawActive) this.drawActive = false;
 	else this.drawActive = true;
+};
+
+PixelSystem.prototype.toggleEraser = function() {
+	if (this.eraser) this.eraser = false;
+	else this.eraser = true;
 };
 
 PixelSystem.prototype.freezeColor = function() {
