@@ -1,3 +1,6 @@
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-48127888-1']);
+
 var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10);
 
 window.onkeyup = function(e) {
