@@ -5,6 +5,8 @@ window.onkeyup = function(e) {
 
 	if (key == 80) { // p pause drawing
 		sys.toggleDrawing();
+	} else if (key == 84) { // t testing
+		sys.testPixels();
 	} else if (key == 72) { // h toggle help
 		document.getElementById("help").className = "";
 	} else if (key == 70) { // f freeze color

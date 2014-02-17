@@ -9,7 +9,7 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	this.animateOn = false;
 
 	this.colorIndex = 0;
-	this.palette = new Palette(30);
+	this.palette = new Palette(15);
 	this.paletteSize = this.palette.getPaletteSize();
 
 	this.pixels = [];
@@ -42,12 +42,34 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	});
 }
 
+// FOR TESTING PURPOSES ONLY //
+PixelSystem.prototype.testPixels = function() {
+	var self = this;
+	self.test = [];
+	for (var i = 0; i < self.cols; i++) {
+		for (var j = ((self.rows-1)+(self.rows-1)*(Math.pow(-1,i+1)))/2; j < self.rows && j >=0; j+=Math.pow(-1,i)) {
+			self.test.push(self.pixels[i][j]);	
+		}
+	}
+	drawTimeout(0,self);
+};
+
+function drawTimeout(i, self) {
+	setTimeout(function(){self.test[i].setColorObject(new Color(self.palette.getPaletteColor(self.colorIndex), self.colorIndex));
+		self.test[i].draw();
+		if (self.activePixels.indexOf(self.test[i]) == -1) self.activePixels.push(self.test[i]);
+		if (i < self.test.length - 1) drawTimeout(i+1,self);
+	}, 2);
+}
+///////////////////////////////
+
+
 PixelSystem.prototype.startColorTimer = function() {
 	var self = this;
 	this.colorTimer = setInterval(function() {
 		if (self.colorIndex < self.paletteSize) self.colorIndex++;
 		else self.colorIndex = 0;
-	}, 100);
+	}, 50);
 };
 
 PixelSystem.prototype.clear = function() {
@@ -65,12 +87,13 @@ PixelSystem.prototype.toggleAnimate = function() {
 		this.animateOn = false;
 		clearInterval(this.cycleTimer);
 	} else {
+		console.log(this.activePixels);
 		this.animateOn = true;
 		var self = this;
 		this.cycleTimer = setInterval(function() {
 			self.palette.incrementOffset();
 			self.recolor();
-		}, 100);
+		}, 50);
 	}
 };
 
