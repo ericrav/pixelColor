@@ -30,7 +30,6 @@ function Palette(variation) {
 	color = this.incrementColor(color, this.variation);
 	while (color.toLowerCase() != startColor.toLowerCase()) {
 		this.palette.push(color);
-		console.log(color);
 		color = this.incrementColor(color, this.variation);
 	}
 
