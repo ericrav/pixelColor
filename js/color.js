@@ -35,12 +35,13 @@ function Palette(variation) {
 
 }
 
-Palette.prototype.getPaletteColor = function(index) {
+Palette.prototype.getPaletteColor = function(index, brightnessPercent) {
+	var percent = 100 - Math.abs(50 - brightnessPercent/2)*2 || 0;
 	var i = index+this.offset;
 	while (i >= this.palette.length) {
 		i -= this.palette.length;
 	}
-	return this.palette[i];
+	return this.calculateBrightness(this.palette[i], percent);
 };
 
 Palette.prototype.getPaletteSize = function() {
@@ -49,6 +50,19 @@ Palette.prototype.getPaletteSize = function() {
 
 Palette.prototype.setOffset = function(offset) {
 	this.offset = offset;
+};
+
+Palette.prototype.calculateBrightness = function(hex, percent) {
+	if (percent > 100) percent = 100;
+	else if (percent < 0) percent = 0;
+	var r = parseInt(hex.substring(1,3), 16);
+	var g = parseInt(hex.substring(3,5), 16);
+	var b = parseInt(hex.substring(5,7), 16);
+	// http://stackoverflow.com/a/6444043
+	return '#' +
+       ((0|(1<<8) + r + (255 - r) * percent / 100).toString(16)).substr(1) +
+       ((0|(1<<8) + g + (255 - g) * percent / 100).toString(16)).substr(1) +
+       ((0|(1<<8) + b + (255 - b) * percent / 100).toString(16)).substr(1);
 };
 
 Palette.prototype.incrementOffset = function(i) {

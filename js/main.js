@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-48127888-1']);
   _gaq.push(['_trackPageview']);
@@ -9,6 +10,9 @@
   })();
 
 var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10);
+=======
+var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10, document.getElementById("spectrum1"), document.getElementById("pointer1"));
+>>>>>>> master
 
 window.onkeyup = function(e) {
 	var key = e.keyCode ? e.keyCode : e.which;
@@ -30,10 +34,17 @@ window.onkeyup = function(e) {
 		_gaq.push(['_trackEvent', 'Control', 'Toggle Eraser', 'E']);
 	} else if (key == 67) { // c clear drawing
 		sys.clear();
+<<<<<<< HEAD
 		_gaq.push(['_trackEvent', 'Control', 'Clear', 'C']);
 	}
 	else if (key == 65) { // a animate colors
 		sys.toggleAnimate();
 		_gaq.push(['_trackEvent', 'Control', 'Animate', 'A']);
+=======
+	} else if (key == 65) { // a animate colors
+		sys.toggleAnimate();
+	} else if (key == 32) { // SPACE toggle spectrum
+		sys.toggleSpectrum();
+>>>>>>> master
 	}
 }
