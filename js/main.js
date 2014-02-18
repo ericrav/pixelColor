@@ -1,4 +1,4 @@
-var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10);
+var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10, document.getElementById("spectrum1"), document.getElementById("pointer1"));
 
 window.onkeyup = function(e) {
 	var key = e.keyCode ? e.keyCode : e.which;
@@ -15,8 +15,9 @@ window.onkeyup = function(e) {
 		sys.toggleEraser();
 	} else if (key == 67) { // c clear drawing
 		sys.clear();
-	}
-	else if (key == 65) { // a animate colors
+	} else if (key == 65) { // a animate colors
 		sys.toggleAnimate();
+	} else if (key == 32) { // SPACE toggle spectrum
+		sys.toggleSpectrum();
 	}
 }

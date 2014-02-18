@@ -1,5 +1,7 @@
-function PixelSystem(canvas, cols, rows, pixelSize) {
+function PixelSystem(canvas, cols, rows, pixelSize, spectrum1, pointer1) {
 	this.canvas = canvas;
+	this.spectrum1 = spectrum1;
+	this.pointer1 = pointer1;
 	this.cols = cols;
 	this.rows = rows;
 	this.pixelSize = pixelSize;
@@ -10,6 +12,8 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 	this.eraser = false;
 
 	this.colorIndex = 0;
+	this.brightnessPercent = 0;
+	this.brightnessAdjust = false;
 	this.palette = new Palette(15);
 	this.paletteSize = this.palette.getPaletteSize();
 
@@ -24,6 +28,15 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 			this.pixels[i][j] = new Pixel(canvas, i*pixelSize, j*pixelSize, pixelSize);
 			this.pixels[i][j].draw();
 		}
+	}
+
+	this.spectrumBandWidth = 2;
+	this.spectrum1.width = this.spectrumBandWidth*this.paletteSize;
+	this.spectrum1.height = 30;
+	var ctx = this.spectrum1.getContext("2d");
+	for (var i = 0; i < this.paletteSize; i++) {
+		ctx.fillStyle = this.palette.getPaletteColor(i);
+		ctx.fillRect(i*this.spectrumBandWidth, 0, this.spectrumBandWidth, 30);
 	}
 
 	var self = this;
@@ -44,7 +57,7 @@ function PixelSystem(canvas, cols, rows, pixelSize) {
 					self.activePixels.splice(activeIndex, 1);
 				}
 			} else {
-				pixel.setColorObject(new Color(self.palette.getPaletteColor(self.colorIndex), self.colorIndex));
+				pixel.setColorObject(new Color(self.palette.getPaletteColor(self.colorIndex, self.brightnessPercent), self.colorIndex));
 				pixel.draw();
 				if (activeIndex == -1) self.activePixels.push(pixel);	
 			}
@@ -77,8 +90,14 @@ function drawTimeout(i, self) {
 PixelSystem.prototype.startColorTimer = function() {
 	var self = this;
 	this.colorTimer = setInterval(function() {
-		if (self.colorIndex < self.paletteSize) self.colorIndex++;
-		else self.colorIndex = 0;
+		if (self.brightnessAdjust) {
+			if (self.brightnessPercent < 200) self.brightnessPercent+=5;
+			else self.brightnessPercent = 0;
+		} else {
+			if (self.colorIndex < self.paletteSize) self.colorIndex++;
+			else self.colorIndex = 0;
+			self.pointer1.style.left = self.colorIndex * self.spectrumBandWidth + "px";
+		}
 	}, 50);
 };
 
@@ -90,6 +109,11 @@ PixelSystem.prototype.clear = function() {
 			pixel.draw();
 	}
 	this.activePixels = [];
+};
+
+PixelSystem.prototype.toggleSpectrum = function() {
+	if (this.brightnessAdjust) this.brightnessAdjust = false;
+	else this.brightnessAdjust = true;
 };
 
 PixelSystem.prototype.toggleAnimate = function() {
