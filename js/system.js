@@ -93,6 +93,11 @@ PixelSystem.prototype.startColorTimer = function() {
 		if (self.brightnessAdjust) {
 			if (self.brightnessPercent < 200) self.brightnessPercent+=5;
 			else self.brightnessPercent = 0;
+			var ctx = self.spectrum1.getContext("2d");
+			for (var i = 0; i < self.paletteSize; i++) {
+				ctx.fillStyle = self.palette.getPaletteColor(i, self.brightnessPercent);
+				ctx.fillRect(i*self.spectrumBandWidth, 0, self.spectrumBandWidth, 30);
+			}
 		} else {
 			if (self.colorIndex < self.paletteSize) self.colorIndex++;
 			else self.colorIndex = 0;
@@ -132,6 +137,11 @@ PixelSystem.prototype.toggleAnimate = function() {
 };
 
 PixelSystem.prototype.recolor = function() {
+	var ctx = this.spectrum1.getContext("2d");
+	for (var i = 0; i < this.paletteSize; i++) {
+		ctx.fillStyle = this.palette.getPaletteColor(i, this.brightnessPercent);
+		ctx.fillRect(i*this.spectrumBandWidth, 0, this.spectrumBandWidth, 30);
+	}
 	for (var i = 0; i < this.activePixels.length; i++) {
 		var pixel = this.activePixels[i];
 		pixel.setColor(this.palette.getPaletteColor(pixel.getColor().getPalleteIndex()));
