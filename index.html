@@ -9,13 +9,44 @@
 	<script src="js/main.js" type="text/javascript" charset="utf-8" defer></script>
 </head>
 <body>
-<canvas id="canvas" width="1000" height="1000"></canvas>
-<p id="help" class="fixed">
+<div class="nav">
 	<span class="spectrum-container">
 		<span id="pointer1" class="pointer"></span>
 		<canvas id="spectrum1"></canvas>
 	</span>
-	<br>
-Press p to pause drawing. Press f to freeze color. Press <SPACE> to change spectrum. Press a to animate. Press e to erase. Press c to clear. Press h to hide this.</p>
+</div>
+<div id="help" class="open">
+	<ul class="keys" id="keys">
+		<li id="P">
+			<span class="key" data-keycode="80">P</span>
+			<span class="description">Pause hover drawing</span>
+		</li>
+		<li id="F">
+			<span class="key" data-keycode="70">F</span>
+			<span class="description">Freeze color</span>
+		</li>
+		<li id="D">
+			<span class="key" data-keycode="68">D</span>
+			<span class="description">Change spectrum</span>
+		</li>
+		<li id="A">
+			<span class="key" data-keycode="65">A</span>
+			<span class="description">Animate drawing</span>
+		</li>
+		<li id="E">
+			<span class="key" data-keycode="69">E</span>
+			<span class="description">Toggle eraser</span>
+		</li>
+		<li id="C">
+			<span class="key" data-keycode="67">C</span>
+			<span class="description">Clear drawing</span>
+		</li>
+		<li id="H">
+			<span class="key" data-keycode="72">H</span>
+			<span class="description">Hide help menu</span>
+		</li>
+	</ul>
+</div>
+<canvas id="canvas" width="1000" height="1000"></canvas>
 </body>
 </html>
