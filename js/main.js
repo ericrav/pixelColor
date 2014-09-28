@@ -1,5 +1,16 @@
 var sys = new PixelSystem(document.getElementById("canvas"), 85, 70, 10, document.getElementById("spectrum1"), document.getElementById("pointer1"));
 
+// load saved drawing from url if it exists
+var dataIndex = location.search.indexOf("?d=");
+if (dataIndex > -1) {
+	var hash = location.search.substring(dataIndex+3);
+	sys.loadDrawing(hash);
+}
+
+
+
+
+
 var downFunction = function(key) {
 	if (key == 80) { // p pause drawing
 		document.getElementById("P").className = "active";
@@ -15,6 +26,8 @@ var downFunction = function(key) {
 		document.getElementById("A").className = "active";
 	} else if (key == 68) { // d toggle spectrum
 		document.getElementById("D").className = "active";
+	} else if (key == 83) { // d toggle spectrum
+		document.getElementById("S").className = "active";
 	}
 };
 var upFunction = function(key) {
@@ -23,6 +36,8 @@ var upFunction = function(key) {
 		sys.toggleDrawing();
 	} else if (key == 84) { // t testing
 		sys.testPixels();
+	} else if (key == 83) { // s
+		console.log(sys.exportDrawing());
 	} else if (key == 72) { // h toggle help
 		document.getElementById("help").className = "closed";
 	} else if (key == 70) { // f freeze color
