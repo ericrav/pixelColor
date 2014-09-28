@@ -1,3 +1,5 @@
+var hashids = new Hashids("testing");
+
 function PixelSystem(canvas, cols, rows, pixelSize, spectrum1, pointer1) {
 	this.canvas = canvas;
 	this.spectrum1 = spectrum1;
@@ -47,7 +49,7 @@ function PixelSystem(canvas, cols, rows, pixelSize, spectrum1, pointer1) {
 		var y = e.clientY - rect.top;
 		var i = Math.floor(x/pixelSize);
 		var j = Math.floor(y/pixelSize);
-		if (self.drawActive) {
+		if (self.drawActive && i < self.cols && j < self.rows) {
 			var pixel = self.pixels[i][j];
 			var activeIndex = self.activePixels.indexOf(pixel);
 			if (self.eraser) {
@@ -126,7 +128,6 @@ PixelSystem.prototype.toggleAnimate = function() {
 		this.animateOn = false;
 		clearInterval(this.cycleTimer);
 	} else {
-		console.log(this.activePixels);
 		this.animateOn = true;
 		var self = this;
 		this.cycleTimer = setInterval(function() {
@@ -134,6 +135,92 @@ PixelSystem.prototype.toggleAnimate = function() {
 			self.recolor();
 		}, 50);
 	}
+};
+
+PixelSystem.prototype.loadDrawing = function(hash) {
+	var values = hashids.decrypt(hash);
+	console.log(values);
+	var self = this;
+	this.activePixels = [];
+	var w = this.cols;
+	var skipped = 0;
+	for (var i = 0, pi = 0; i < values.length; i++) {
+		var colorIndex = values[i];
+		if (colorIndex == 0) {
+			var length = values[i+1];
+			var last = pi + length;
+			for (pi; pi < last - 1; pi++) {
+				var y = pi % w;
+				var x = (pi - y) / w;
+				// console.log("index0 " + i + " + " + skipped + " at " + x + ", " + y);
+				self.pixels[y][x].setColorObject(new Color("#000000", -1));
+				self.pixels[y][x].draw();
+			}
+			pi++;
+			i++;
+		} else {
+			var y = (pi) % w;
+			var x = (pi - y) / w;
+			// console.log("index " + i + " + " + skipped + " at " + x + ", " + y + " : " + colorIndex);
+			self.pixels[y][x].setColorObject(new Color(self.palette.getPaletteColor(colorIndex - 1 - self.palette.getOffset(), 0), colorIndex - 1));
+			self.pixels[y][x].draw();
+			self.activePixels.push(self.pixels[y][x]);
+			pi++;
+		}
+	}
+
+};
+
+PixelSystem.prototype.exportDrawing = function() {
+	var values = [];
+	var blackCount = 0;
+	var self = this;
+	for (var j = 0; j < self.rows; j++) {
+		for (var i = 0; i < self.cols; i++) {
+			var colorIndex = self.pixels[i][j].getColor().getPalleteIndex();
+			if (colorIndex != -1) {
+				if (blackCount != 0) {
+					values.push(0);
+					values.push(blackCount);
+					blackCount = 0;
+				}
+				values.push(colorIndex + 1 + self.palette.getOffset());
+			} else {
+				blackCount++;
+			}
+		}
+	}
+	if (blackCount != 0) {
+		values.push(0);
+		values.push(blackCount);
+		blackCount = 0;
+	}
+	console.log("\noriginal")
+	console.log(values);
+	console.log("length " + values.length);
+	console.log("array to string");
+	console.log(values.toString());
+	console.log("length " + values.toString().length);
+	console.log("\nhashed")
+	hashed = hashids.encrypt(values);
+	console.log(hashed);
+	console.log("length " + hashed.length);
+	var url = "http://ericrav.github.io/pixelColor?d=" + hashed;
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "https://api-ssl.bitly.com/v3/shorten?access_token=a711ff321df3cc0387d5fa92c7a92f40e113a419&longUrl=" + encodeURI(url));
+	xhr.onreadystatechange = function() { 
+		if(xhr.readyState == 4) { 
+			if(xhr.status == 200) {
+				data = JSON.parse(xhr.responseText);
+				console.log(data);
+				console.log(data.data.url);
+				alert("share this url: " + data.data.url);
+			} else {
+				console.log("Oops", xhr);
+			}
+		} 
+	}
+	xhr.send();
 };
 
 PixelSystem.prototype.recolor = function() {
