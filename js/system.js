@@ -207,20 +207,23 @@ PixelSystem.prototype.exportDrawing = function() {
 	console.log("length " + hashed.length);
 	var url = "http://ericrav.github.io/pixelColor?d=" + hashed;
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "https://api-ssl.bitly.com/v3/shorten?access_token=a711ff321df3cc0387d5fa92c7a92f40e113a419&longUrl=" + encodeURI(url));
+	console.log(encodeURIComponent(url));
+	xhr.open("POST", "https://api-ssl.bitly.com/v3/shorten");
+	xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	xhr.onreadystatechange = function() { 
 		if(xhr.readyState == 4) { 
 			if(xhr.status == 200) {
 				data = JSON.parse(xhr.responseText);
 				console.log(data);
 				console.log(data.data.url);
-				alert("share this url: " + data.data.url);
+				if (data.status_code != 500) alert("share this url: " + data.data.url);
+				else alert("Woops! Something went wrong.");
 			} else {
 				console.log("Oops", xhr);
 			}
 		} 
 	}
-	xhr.send();
+	xhr.send("access_token=a711ff321df3cc0387d5fa92c7a92f40e113a419&longUrl=" + encodeURIComponent(url));
 };
 
 PixelSystem.prototype.recolor = function() {
